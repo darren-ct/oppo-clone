@@ -26,7 +26,6 @@ const Sidebar = ({isSidebar,promo}) => {
      const[activeTab,setActiveTab] = useState(0);
      const[activeSlider,setActiveSlider] = useState(0);
 
-     console.log(list)
      //  UseEffect
      useEffect(()=>{
              if(input) getProducts()
