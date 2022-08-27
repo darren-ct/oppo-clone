@@ -26,6 +26,7 @@ const Sidebar = ({isSidebar,promo}) => {
      const[activeTab,setActiveTab] = useState(0);
      const[activeSlider,setActiveSlider] = useState(0);
 
+     console.log(list)
      //  UseEffect
      useEffect(()=>{
              if(input) getProducts()
@@ -65,7 +66,7 @@ const Sidebar = ({isSidebar,promo}) => {
            let { data, error } = await kontenbase.service('Phones').find({lookup: ['_id','name']});
            if(error) return console.log(error);
 
-           data = data.filter(item =>  item.title.toLowerCase().trim().startsWith(input.toLowerCase().trim()) === true);
+           data = data.filter(item =>  item.name.toLowerCase().trim().startsWith(input.toLowerCase().trim()) === true);
            setList(data)
      };
 
