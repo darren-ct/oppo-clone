@@ -19,7 +19,7 @@ const Sidebar = ({isSidebar,promo}) => {
      const navigate = useNavigate();
      
      // States
-     const[list,setList] = useState(["Oppo Zoom","Oppo Reno 10X"]);
+     const[list,setList] = useState([]);
      const[input,setInput] = useState("");
      const[activeInput,setActiveInput] = useState(false);
 
@@ -30,6 +30,16 @@ const Sidebar = ({isSidebar,promo}) => {
      useEffect(()=>{
              if(input) getProducts()
      },[input])
+
+     useEffect(()=>{
+       
+         if(isSidebar && document.body){
+              document.body.classList.add("hide-scroll")
+         } else if(document.body) {
+              document.body.classList.remove("hide-scroll")
+         };
+
+     },[isSidebar])
 
      // Function
      const toggle = (type,id) => {
@@ -70,7 +80,7 @@ const Sidebar = ({isSidebar,promo}) => {
      };
 
   return (
-    <div className={`${!isSidebar && 'translate-x-full'} block lg:hidden fixed right-0 ${!promo ? 'top-16' : 'top-18'} w-full h-full px-16 py-4 bg-white duration-200 z-50`}>
+    <div style={{height:600}} className={`${!isSidebar && 'translate-x-full'} block lg:hidden fixed right-0 ${!promo ? 'top-16' : 'top-18'} w-full px-16 py-4 bg-white duration-200 z-50 overflow-y-scroll`}>
 
         {/* Profile */}
         <div className='flex flex-row mb-12 mt-12 items-center'>

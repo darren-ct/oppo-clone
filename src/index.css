@@ -9,3 +9,6 @@
     box-sizing: border-box;
 }
 
+.hide-scroll{
+    overflow-y: hidden;
+}

@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom"
+import { useContext } from "react";
+import { HomeContext } from "../pages/Home";
 import { ProductInterface } from "../interfaces/ProductInterface"
 
-const Product = ({id,name,image,short_desc,height,type}:ProductInterface) => {
+const Product = ({id,name,image,short_desc,height,type}) => {
   const navigate = useNavigate();
+  const {belowMd} = useContext(HomeContext);
 
   const navigateTo = () => {
     if(type === "iot") return navigate(`/iot/${id}`) 
@@ -10,8 +13,10 @@ const Product = ({id,name,image,short_desc,height,type}:ProductInterface) => {
   }
 
   return (
-    <div className="w-full flex flex-col space-y-4 cursor-pointer" onClick={navigateTo}>
-        <img src={image} className={`object-cover w-full mb-4`} style={{height:height}}/>
+    <div className="w-full flex flex-col items-center space-y-4 cursor-pointer" onClick={navigateTo}>
+        <div className="overflow-hidden">
+           <img src={image} className={`object-cover w-full mb-4 scale-100 hover:scale-125 hover:opacity-70 duration-150`} style={!belowMd ? {height:height} : {height:500,width:380}}/>
+        </div>
         <span className="text-base font-medium">{name}</span>
         <span className="text-sm font-light">{short_desc}</span>
         <div className="flex flex-row space-x-4 items-center">

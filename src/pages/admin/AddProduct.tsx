@@ -1,4 +1,4 @@
-import { useContext,useState,useEffect } from "react"
+import {useState,useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 
 import {kontenbase} from "../../lib/kontenbase";
@@ -31,6 +31,7 @@ const AddProduct = () => {
   const[form,setForm] = useState<schemaInterface>({name : "", description : "", short_desc : "", price : 0, type : 1, category : 3});
   const[errors,setErrors] = useState<errorInterface>({name:"", description:"", short_desc:"", price:"", image:"" });
 
+
   // Functions
   const onSelect = (e : any) => {
     setImageForm(e.target.files[0])
@@ -62,44 +63,34 @@ const AddProduct = () => {
          // image
       if(!imageForm || imageForm === "") return setErrors(prev => { return {...prev, image:"Gambar harus ada"}} );
 
-      //submit
-      // const formData = new FormData();
-
-      // formData.append("image",imageForm);
-      // formData.append("name",form.name);
-      // formData.append("description",form.description);
-      // formData.append("short_desc",form.short_desc);
-      // formData.append("price",(form.price).toString());
-      // formData.append("category_id",(form.category).toString());
-
       try {
         if(form.type === 2){
-          // await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Iots',formData)
+    
           const { data, error } = await kontenbase.service('Iots').create({
-            image: imageForm,
+            image: [{...imageForm,fileName : imageForm.name, url:"dwdwdd" }],
             name: form.name,
             description: form.description,
             short_desc : form.short_desc ,
             price : form.price,
-            category_id : form.category
+            category_id : Number(form.category)
           })
 
           console.log(data,error)
+          navigate('/')
         } else {
-          // await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Phones',formData)
+
           const { data, error } = await kontenbase.service('Phones').create({
-            image: imageForm,
+            image: [imageForm],
             name: form.name,
             description: form.description,
             short_desc : form.short_desc ,
             price : form.price,
-            category_id : form.category
+            category_id : Number(form.category)
           })
 
-          console.log(data,error)
+          console.log(data,error);
+          navigate('/')
         };
-
-        // console.log("Success")
         
 
       } catch(err) {

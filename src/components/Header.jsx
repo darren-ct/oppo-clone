@@ -1,8 +1,9 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState,useContext } from 'react';
+import { AppContext } from '../App.tsx';
 
 import Sidebar from './Sidebar.jsx';
 import Dropdown from './Dropdown';
+import MiniDropdown from './MiniDropdown.jsx';
 
 import oppo from '../assets/oppologo.png';
 import account from '../assets/icons/account.png';
@@ -10,26 +11,31 @@ import search from '../assets/icons/search.png';
 import shop from '../assets/icons/shop.png';
 import menu from '../assets/icons/menu.png';
 import cross from '../assets/icons/outline-cross.png'
+import Searchdrop from './Searchdrop';
 
-const Header = ({promo}:{promo:boolean}) => {
-
-   const navigate = useNavigate();
+const Header = ({promo}) => {
+   const{onDrop,toggleDrop} = useContext(AppContext);
 
    //State
-   const[isSidebar,setIsSidebar]=useState(false);
+   const[isSidebar,setIsSidebar]= useState(false);
+   const[isSearch,setIsSearch]= useState(false);
+   const[isDropdown,setIsDropdown]= useState(false);
    const[type,setType] = useState("");
-   const[isDropdown,setIsDropdown]=useState(false);
 
    //Functions
-   const toggleSidebar = ():void => {
+   const toggleSidebar = () => {
       setIsSidebar(prev => !prev)
    };
 
-   const toggleDropdown = ():void => {
+   const toggleDropdown = () => {
       setIsDropdown(prev => !prev)
    };
 
-   const switchDropdown = (item:string):void => {
+   const toggleSearch = () => {
+      setIsSearch(true)
+   }
+
+   const switchDropdown = (item) => {
          if(item === type ){
             toggleDropdown()
             setType("")
@@ -42,17 +48,17 @@ const Header = ({promo}:{promo:boolean}) => {
 
    return (
    <>
-    <section className={`w-full ${promo ? "mt-24" : "mt-0"}`}>
+    <section className={`w-full ${promo ? "mt-24" : "mt-0"} relative`}>
           <div className="px-8 py-4 xl:container xl:mx-auto">
             
                <div className="flex flex-row justify-between">
                      
-                     <img src={oppo} className="w-16 h-6"/>
+                     <img src={oppo} className={`${isSearch && 'lg:invisible'} w-16 h-6`}/>
 
-                     <div className="hidden lg:flex flex-row space-x-8 center">
+                     <div className={`${isSearch && 'lg:invisible'} hidden lg:flex flex-row space-x-8 center`}>
                            <span className={`relative text-slate-600 hover:text-black ${type === "smartphone" && isDropdown ? "text-black" : ""} text-xs cursor-pointer duration-150`} onClick={()=>{switchDropdown("smartphone")}}>
                               Smartphone
-                              <div className={`absolute -bottom-4 left-0 w-full h-0.5 bg-black opacity-0 ${type === "smartphone" && isDropdown ? "lg:opacity-100" : ""} duration-150 `}></div>
+                              <div className={`absolute ${promo ? "-bottom-4" : "-bottom-4"} left-0 w-full h-0.5 bg-black opacity-0 ${type === "smartphone" && isDropdown ? "lg:opacity-100" : ""} duration-150 `}></div>
                            </span>
 
                            <span className={`relative text-slate-600 hover:text-black ${type === "iot" && isDropdown ? "text-black" : ""} text-xs cursor-pointer duration-150`} onClick={()=>{switchDropdown("iot")}}>
@@ -81,10 +87,11 @@ const Header = ({promo}:{promo:boolean}) => {
                           </span>
                      </div>
 
-                     <div className="flex flex-row space-x-8 center">
-                           <img src={search} className="hidden lg:inline-block w-6 h-6 cursor-pointer"/>
+                     <div className={`${isSearch && 'lg:invisible'} flex flex-row space-x-8 center`}>
+                           <img src={search} onClick={toggleSearch} className="hidden lg:inline-block w-6 h-6 cursor-pointer"/>
                            <img src={shop} className="w-6 h-6 cursor-pointer"/>
-                           <img src={account} className="hidden lg:inline-block w-6 h-6 cursor-pointer"/>
+                           <img src={account} onClick={toggleDrop} className="hidden lg:inline-block w-6 h-6 cursor-pointer"/>
+                           {onDrop ? <MiniDropdown/> : ""}
                            <img src={!isSidebar ? menu : cross}  className="inline-block lg:hidden w-6 h-6 cursor-pointer" onClick={toggleSidebar}/>
                      </div>
                </div>
@@ -94,6 +101,7 @@ const Header = ({promo}:{promo:boolean}) => {
 
     <Sidebar  isSidebar={isSidebar} promo={promo}/>
     <Dropdown type={type} isDropdown={isDropdown} toggleDropdown={toggleDropdown} promo={promo}/>
+    <Searchdrop isSearch={isSearch} setIsSearch={setIsSearch} promo={promo}/>
   </>
   )
 }

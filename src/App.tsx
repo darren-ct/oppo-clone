@@ -1,7 +1,7 @@
 import { useState,createContext} from 'react';
 import {BrowserRouter,Routes,Route,Navigate} from 'react-router-dom';
 
-import Header from './components/Header';
+import Header from './components/Header.jsx';
 import Promo from './components/Promo'
 import Footer from './components/Footer'
 import ChatIcon from './components/ChatIcon';
@@ -18,16 +18,9 @@ function App() {
 
   // States
   const[promo,setPromo] = useState(true);
-  const[onSearch,setOnSearch] = useState(false);
   const[onDrop,setOnDrop] = useState(false);
 
-  // useEffect
-
   // Functions
-  const toggleSearch = () => {
-      setOnSearch(prev => !prev)
-  };
-
   const toggleDrop = () => {
        setOnDrop(prev => !prev)
   };
@@ -38,7 +31,7 @@ function App() {
   }
 
   return (
-  <AppContext.Provider value={{onSearch,onDrop,toggleDrop,toggleSearch}} >
+  <AppContext.Provider value={{onDrop,toggleDrop}} >
     <BrowserRouter>
         <Promo promo={promo} hidePromo={hidePromo}/>
         <Header promo={promo} />

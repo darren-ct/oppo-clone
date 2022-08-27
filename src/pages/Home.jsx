@@ -1,18 +1,19 @@
-import { useState,useEffect } from 'react';
+import { useState,useEffect,createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {kontenbase} from '../lib/kontenbase';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
-import Product from '../components/Product';
-
+import Product from '../components/Product.jsx';
 
 import { dunia } from '../helpers';
-
+export const HomeContext = createContext(null)
 
 const Home = () => {
      const navigate = useNavigate();
 
     //   States
+    const [belowMd,setBelowMd] = useState(window.innerWidth < 768);
+
     const[sliders,setSliders] = useState([]);
     const[products,setProducts] = useState([]);
     const[accesories,setAccesories] = useState([]);
@@ -24,9 +25,22 @@ const Home = () => {
         window.scrollTo(0,0);
     },[])
 
+    useEffect(()=>{
+          window.addEventListener('resize', handleWindowResize);
+
+          return () => {
+          window.removeEventListener('resize', handleWindowResize);
+          };
+     },[])
+
     //Functions
+    const handleWindowResize = () => {
+          if(window.innerWidth < 768) return setBelowMd(true);
+          if(window.innerWidth > 768) return setBelowMd(false);
+    };
+
     const getProducts = async() => {
-        const { data, error } = await kontenbase.service('Phones').find({limit:5});
+        const { data, error } = await kontenbase.service('Phones').find({limit:6});
         if(error) return console.log(error);
         setSliders(data);
         setProducts(data);
@@ -41,10 +55,12 @@ const Home = () => {
     }
      
   return (
+  <HomeContext.Provider value={{belowMd}}>
   <div className=''>
 
      {/* Slider */}
-    <Swiper spaceBetween={50} slidesPerView={1} onSlideChange={() => {}} onSwiper={()=>{}}>
+    <div>
+       <Swiper spaceBetween={50} slidesPerView={1} onSlideChange={() => {}} onSwiper={()=>{}}>
          {sliders.map(slider => (
              <SwiperSlide>
                   <div className='flex flex-col-reverse items-center  md:flex-row md:justify-center space-x-8' style={{height:600,backgroundColor:"#FEFEFE"}}>
@@ -58,12 +74,13 @@ const Home = () => {
                      </div>
              </div>
      
-             <img src={slider.image[0].url} style={{width:500,height:600}} className='object-cover' />
+             <img src={slider.image[0].url} style={{width:500,height:480}} className='object-cover' />
      
           </div>
           </SwiperSlide>
          ))}
-    </Swiper>
+      </Swiper>
+    </div>
 
    {/* Warning */}
    <div className='px-8 mt-10 xl:container xl:mx-auto'>
@@ -90,20 +107,25 @@ const Home = () => {
                      {/* 320 */}
 
                      <div className='flex flex-col space-y-24 md:mb-0 mb-16 md:w-2/5 w-full'>
-                         { products.length !== 0 && <Product id={products[1]._id} name={products[1].name} image={products[1].image[0].url} short_desc={products[1].short_desc} height={240} type="phone"/> }
-                         { products.length !== 0 &&  <Product id={products[2]._id} name={products[2].name} image={products[2].image[0].url} short_desc={products[2].short_desc} height={240} type="phone"/> }
+                         { products.length !== 0 && <Product id={products[1]._id} name={products[1].name} image={products[1].image[0].url} short_desc={products[1].short_desc} height={320} type="phone"/> }
+                         { products.length !== 0 &&  <Product id={products[2]._id} name={products[2].name} image={products[2].image[0].url} short_desc={products[2].short_desc} height={320} type="phone"/> }
                      </div>
               </div>
 
 
               <div className='flex flex-col mt-16 md:flex-row md:mt-28 md:justify-between'>
-                    <div className='w-full md:w-2/6 mb-16 md:mb-0'>
+                    <div className='w-full md:w-1/4 mb-16 md:mb-0'>
                     { products.length !== 0  && <Product id={products[3]._id} name={products[3].name}  image={products[3].image[0].url} short_desc={products[3].short_desc} height={240} type="phone"/> }
                     </div>
 
-                    <div className="w-full md:w-1/2">
+                    <div className="w-full md:w-1/4">
                     { products.length !== 0 && <Product id={products[4]._id} name={products[4].name}  image={products[4].image[0].url}short_desc={products[4].short_desc} height={240} type="phone"/> }
                     </div>  
+
+                    <div className="w-full md:w-1/4">
+                    { products.length !== 0 && <Product id={products[5]._id} name={products[5].name}  image={products[5].image[0].url}short_desc={products[5].short_desc} height={240} type="phone"/> }
+                    </div>  
+
               </div>
          </div>
     </div>
@@ -158,6 +180,7 @@ const Home = () => {
     </div>
 
   </div>
+  </HomeContext.Provider>
   )
 }
 

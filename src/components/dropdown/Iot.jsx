@@ -9,8 +9,6 @@ const Iot = () => {
   const[list,setList] = useState([]);
   const[type,setType] = useState("audio");
 
-  console.log(list);
-
   // useEffect
   useEffect(()=>{
        getIots()
