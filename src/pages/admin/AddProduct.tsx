@@ -63,23 +63,44 @@ const AddProduct = () => {
       if(!imageForm || imageForm === "") return setErrors(prev => { return {...prev, image:"Gambar harus ada"}} );
 
       //submit
-      const formData = new FormData();
+      // const formData = new FormData();
 
-      formData.append("image",imageForm);
-      formData.append("name",form.name);
-      formData.append("description",form.description);
-      formData.append("short_desc",form.short_desc);
-      formData.append("price",(form.price).toString());
-      formData.append("category_id",(form.category).toString());
+      // formData.append("image",imageForm);
+      // formData.append("name",form.name);
+      // formData.append("description",form.description);
+      // formData.append("short_desc",form.short_desc);
+      // formData.append("price",(form.price).toString());
+      // formData.append("category_id",(form.category).toString());
 
       try {
         if(form.type === 2){
-          await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Iots',formData)
+          // await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Iots',formData)
+          const { data, error } = await kontenbase.service('Iots').create({
+            image: imageForm,
+            name: form.name,
+            description: form.description,
+            short_desc : form.short_desc ,
+            price : form.price,
+            category_id : form.category
+          })
+
+          console.log(data,error)
         } else {
-          await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Phones',formData)
+          // await axios.post('https://api.kontenbase.com/query/api/v1/9b5b9994-1cdd-4d45-af12-3e1f71a10c2c/Phones',formData)
+          const { data, error } = await kontenbase.service('Phones').create({
+            image: imageForm,
+            name: form.name,
+            description: form.description,
+            short_desc : form.short_desc ,
+            price : form.price,
+            category_id : form.category
+          })
+
+          console.log(data,error)
         };
 
-        console.log("Success")
+        // console.log("Success")
+        
 
       } catch(err) {
         console.log(err)
