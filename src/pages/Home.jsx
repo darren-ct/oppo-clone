@@ -74,7 +74,7 @@ const Home = () => {
                      </div>
              </div>
      
-             <img src={slider.image[0].url} style={{width:500,height:480}} className='object-cover' />
+             <img src={slider.image[0].url} style={{width:500,height:480}} className='object-cover mb-8 md:mb-0' />
      
           </div>
           </SwiperSlide>
