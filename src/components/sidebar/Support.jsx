@@ -1,3 +1,6 @@
+import { useContext } from 'react';
+import { SidebarContext } from '../Sidebar';
+
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
@@ -5,8 +8,9 @@ import { layanan } from '../../helpers';
 
 const Support = () => {
     const navigate = useNavigate();
+    const {belowXsm} = useContext(SidebarContext);
 
-    const renderSlide = (item:{image:string,name:string}) => {
+    const renderSlide = (item) => {
            return (
             <SwiperSlide>
               <div className="flex flex-col items-center shrink-0 cursor-pointer" onClick={()=>{}}>
@@ -21,7 +25,7 @@ const Support = () => {
 
     return (
     <div className='mt-8'>
-        <Swiper spaceBetween={20} slidesPerView={4} onSlideChange={() => {}} onSwiper={()=>{}}>
+        <Swiper spaceBetween={20} slidesPerView={belowXsm ? 1 : 4} onSlideChange={() => {}} onSwiper={()=>{}}>
            {layanan.map(item => renderSlide(item))}
        </Swiper>
 

@@ -1,8 +1,8 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {kontenbase} from '../lib/kontenbase'
 
-import Support from './sidebar/Support';
+import Support from './sidebar/Support.jsx';
 import Iot from './sidebar/Iot.jsx';
 import Smartphone from './sidebar/Smartphone.jsx';
 import Loader from './Loader';
@@ -14,6 +14,7 @@ import plus from '../assets/icons/plus.png';
 import minus from '../assets/icons/minus.png';
 import {popular} from '../helpers/index';
 
+export const SidebarContext = createContext(null);
 
 const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
 
@@ -21,13 +22,18 @@ const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
      
      
      // States
+     const [belowXsm,setBelowXsm] = useState(window.innerWidth < 484);
+
      const[loading,setLoading] = useState(false);
      const[list,setList] = useState([]);
+
      const[input,setInput] = useState("");
      const[activeInput,setActiveInput] = useState(false);
 
      const[activeTab,setActiveTab] = useState(0);
      const[activeSlider,setActiveSlider] = useState(0);
+
+     console.log(belowXsm)
 
      //  UseEffect
      useEffect(()=>{
@@ -43,6 +49,13 @@ const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
          };
 
      },[isSidebar])
+
+     useEffect(()=>{
+       window.addEventListener('resize', handleWindowResize);
+       return () => {
+       window.removeEventListener('resize', handleWindowResize);
+       };
+       },[])
 
      // Function
      const toggle = (type,id) => {
@@ -84,7 +97,13 @@ const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
            setList(data)
      };
 
+     const handleWindowResize = () => {
+       if(window.innerWidth < 484) return setBelowXsm(true);
+       if(window.innerWidth > 484) return setBelowXsm(false);
+      };
+
   return (
+  <SidebarContext.Provider value={{belowXsm}}>
     <div style={{height:600}} className={`${!isSidebar && 'translate-x-full'} block lg:hidden fixed right-0 ${!promo ? 'top-16' : 'top-18'} w-full px-16 py-4 bg-white duration-200 z-50 overflow-y-scroll`}>
 
         {/* Profile */}
@@ -236,6 +255,7 @@ const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
         
 
     </div>
+</SidebarContext.Provider>
   )
 }
 

@@ -1,13 +1,16 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
+import { SidebarContext } from '../Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
+import { Swiper, SwiperSlide } from 'swiper/react';
 import Loader from "../Loader";
 
 import {kontenbase} from '../../lib/kontenbase';
 
+
 const Iot = ({category,setIsSidebar}) => {
     const navigate = useNavigate();
+    const{belowXsm} = useContext(SidebarContext);
 
     // States
     const[list,setList] = useState([]);
@@ -55,7 +58,7 @@ const Iot = ({category,setIsSidebar}) => {
   return (
     <div className='mt-8 relative' style={{minHeight:100}}>
     { loader ? <Loader size={64} fixed={false}/> :
-    <Swiper spaceBetween={20} slidesPerView={4} onSlideChange={() => {}} onSwiper={()=>{}}>
+    <Swiper spaceBetween={20} slidesPerView={belowXsm ? 1 : 4} onSlideChange={() => {}} onSwiper={()=>{}}>
        {list.map(item => renderSlide(item))}
    </Swiper>
     }

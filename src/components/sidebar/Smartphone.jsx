@@ -1,5 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext } from 'react';
+import { SidebarContext } from '../Sidebar';
 import { useNavigate } from 'react-router-dom';
+
+
 import { Swiper, SwiperSlide } from 'swiper/react';
 
 import Loader from '../Loader';
@@ -13,6 +16,7 @@ import aseries from "../../assets/dummies/a.jpg";
 
 const Smartphone = ({category,setIsSidebar}) => {
     const navigate = useNavigate();
+    const{belowXsm} = useContext(SidebarContext);
 
     // States
     const[list,setList] = useState([]);
@@ -68,7 +72,7 @@ const Smartphone = ({category,setIsSidebar}) => {
   return (
     <div className='mt-8 relative'>
         { loader ? <Loader size={64} fixed={false}/> :
-          <Swiper spaceBetween={20} slidesPerView={4} onSlideChange={() => {}} onSwiper={()=>{}}>
+          <Swiper spaceBetween={20} slidesPerView={belowXsm ? 1 : 4} onSlideChange={() => {}} onSwiper={()=>{}}>
              <SwiperSlide>
                <div className="flex flex-col items-center cursor-pointer" onClick={()=>{navigate(`/products?type=phone&category=${category}`)}}>
                     <div className="flex items-center justify-center bg-slate-400 w-24 h-24">
