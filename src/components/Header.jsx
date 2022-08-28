@@ -99,7 +99,7 @@ const Header = ({promo}) => {
           </div>
     </section>
 
-    <Sidebar  isSidebar={isSidebar} promo={promo}/>
+    <Sidebar  isSidebar={isSidebar} setIsSidebar={setIsSidebar} promo={promo}/>
     <Dropdown type={type} isDropdown={isDropdown} toggleDropdown={toggleDropdown} promo={promo}/>
     <Searchdrop isSearch={isSearch} setIsSearch={setIsSearch} promo={promo}/>
   </>

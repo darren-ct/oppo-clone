@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import {kontenbase} from '../lib/kontenbase';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
+import Loader from '../components/Loader';
 import Product from '../components/Product.jsx';
 
 import { dunia } from '../helpers';
@@ -17,6 +18,10 @@ const Home = () => {
     const[sliders,setSliders] = useState([]);
     const[products,setProducts] = useState([]);
     const[accesories,setAccesories] = useState([]);
+
+    //   Loaders
+    const[prodLoading,setProdLoading] = useState(false);
+    const[accLoading,setAccLoading] = useState(false);
 
     // UseEffect
     useEffect(()=>{
@@ -40,7 +45,10 @@ const Home = () => {
     };
 
     const getProducts = async() => {
-        const { data, error } = await kontenbase.service('Phones').find({limit:6});
+        setProdLoading(true)
+        const { data, error } = await kontenbase.service('Phones').find({limit:6})
+        setProdLoading(false)
+
         if(error) return console.log(error);
         setSliders(data);
         setProducts(data);
@@ -48,18 +56,22 @@ const Home = () => {
     };
 
     const getAcc = async() => {
+          setAccLoading(true)
           const { data, error } = await kontenbase.service('Iots').find({limit:2});
+          setAccLoading(false)
+
           if(error) return console.log(error);
           setAccesories(data)
 
-    }
+    };
      
   return (
   <HomeContext.Provider value={{belowMd}}>
   <div className=''>
 
      {/* Slider */}
-    <div>
+    <div className='relative'>
+       { prodLoading  ? <Loader size={64} fixed={true} /> :
        <Swiper spaceBetween={50} slidesPerView={1} onSlideChange={() => {}} onSwiper={()=>{}}>
          {sliders.map(slider => (
              <SwiperSlide>
@@ -79,7 +91,7 @@ const Home = () => {
           </div>
           </SwiperSlide>
          ))}
-      </Swiper>
+      </Swiper> }
     </div>
 
    {/* Warning */}
@@ -98,6 +110,7 @@ const Home = () => {
               <p className='underline underline-offset-4 cursor-pointer'>Tampilkan semua</p>
          </div>
 
+         { prodLoading ? <Loader size={64} fixed={false} /> :
          <div className='mt-16'>
               <div className='flex flex-col md:flex-row md:justify-between'>
                      <div className='md:w-1/2 w-full mb-16 md:mb-0'>
@@ -128,6 +141,7 @@ const Home = () => {
 
               </div>
          </div>
+         }
     </div>
 
     {/* Aksesori */}
@@ -136,6 +150,8 @@ const Home = () => {
               <span className='text-2xl'>Aksesori</span>
               <p className='underline underline-offset-4 cursor-pointer'>Tampilkan semua</p>
          </div>
+
+               {  accLoading ? <Loader size={64} fixed={false} /> :
 
               <div className='flex flex-col md:flex-row md:justify-between mt-16'>
                     <div className="mb-16 md:mb-0 md:w-7/12 w-full">
@@ -146,6 +162,8 @@ const Home = () => {
                       { accesories.length === 2 && <Product id={accesories[1]._id} name={accesories[1].name} image={accesories[1].image[0].url} short_desc={accesories[1].short_desc} height={320} type="iot"/> }
                     </div>  
               </div>
+
+               }
          </div>
 
      {/*Dunia OPPO*/}

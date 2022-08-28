@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
+import Loader from "../Loader";
+
 import {kontenbase} from '../../lib/kontenbase';
 
-const Iot = ({category}) => {
+const Iot = ({category,setIsSidebar}) => {
     const navigate = useNavigate();
 
     // States
     const[list,setList] = useState([]);
+    const[loader,setLoader] = useState(false);
 
     //useEffect
     useEffect(()=>{
@@ -18,8 +21,8 @@ const Iot = ({category}) => {
     // Functions
     const renderSlide = (item) => {
      return ( <SwiperSlide>
-                 <div className="flex flex-col items-center shrink-0 cursor-pointer" onClick={()=>{navigate(`/iot/${item._id}`)}}>
-                    <div className="flex items-center justify-center bg-slate-400 w-24 h-24">
+                 <div className="flex flex-col items-center shrink-0 cursor-pointer" onClick={()=>{navigate(`/iot/${item._id}`);setIsSidebar(false)}}>
+                    <div className="flex items-center justify-center w-24 h-24">
                       <img src={item.image[0].url} className="w-24 h-24 object-cover"/>
                     </div>
                    <span className="mt-4 text-center text-xs" style={{maxWidth:96}}>{item.name}</span>
@@ -31,14 +34,18 @@ const Iot = ({category}) => {
     const getIots = async() => {
       if(category === "audio"){
 
+        setLoader(true)
         const { data, error } = await kontenbase.service('Iots').find({limit:6,where:{category_id:1}});
         if(error) return console.log(error);
+        setLoader(false)
         setList(data) 
     
       } else {
 
+        setLoader(true)
         const { data, error } = await kontenbase.service('Iots').find({limit:3,where:{category_id:2}});
         if(error) return console.log(error);
+        setLoader(false)
         setList(data) 
         
       }
@@ -46,11 +53,13 @@ const Iot = ({category}) => {
 
 
   return (
-    <div className='mt-8'>
+    <div className='mt-8 relative' style={{minHeight:100}}>
+    { loader ? <Loader size={64} fixed={false}/> :
     <Swiper spaceBetween={20} slidesPerView={4} onSlideChange={() => {}} onSwiper={()=>{}}>
        {list.map(item => renderSlide(item))}
    </Swiper>
-    </div>
+    }
+    </div> 
   )
 }
 

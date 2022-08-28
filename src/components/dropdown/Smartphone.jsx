@@ -2,6 +2,8 @@ import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom";
 import {kontenbase} from '../../lib/kontenbase';
 
+import Loader from "../Loader";
+
 import xseries from "../../assets/dummies/find.jpg";
 import renoseries from "../../assets/dummies/reno.jpg";
 import aseries from "../../assets/dummies/a.jpg";
@@ -11,42 +13,49 @@ const Smartphone = () => {
 
   // States
   const[list,setList] = useState([]);
-
+  const[loader,setLoader] = useState(false);
   const[type,setType] = useState("x-series")
 
   // useEffect
   useEffect(()=>{
+       setList([])
        getPhones()
   },[type])
 
   // Functions
   const getPhones = async() => {
      if(type === "x-series"){
-
+          
+          setLoader(true)
           const { data, error } = await kontenbase.service('Phones').find({limit:4,where:{category_id:3}});
           if(error) return console.log(error);
+          setLoader(false)
           setList(data) 
       
         } else if(type === "reno"){
       
+          setLoader(true)
           const { data, error } = await kontenbase.service('Phones').find({limit:5,where:{category_id:4}});
           if(error) return console.log(error);
           setList(data) 
+          setLoader(false)
       
         } else {
 
+          setLoader(true)
           const { data, error } = await kontenbase.service('Phones').find({limit:5,where:{category_id:5}});
           if(error) return console.log(error);
           setList(data) 
+          setLoader(false)
           
         }
   };
 
   const renderItem = (item) => {
     return (
-      <div className="flex flex-col items-center p-4 cursor-pointer" onClick={()=>{navigate(`/phone/${item._id}`)}}>
-            <div className="flex items-center justify-center bg-slate-400 w-24 h-24">
-                 <img src={item.image[0].url}/>
+      <div className="flex flex-col items-center p-4 cursor-pointer space-y-8" onClick={()=>{navigate(`/phone/${item._id}`)}}>
+            <div className="flex items-center justify-center w-24 h-24">
+                 <img src={item.image[0].url} />
             </div>
             <span className="mt-4 text-center text-xs" style={{maxWidth:96}}>{item.name}</span>
       </div>
@@ -61,16 +70,20 @@ const Smartphone = () => {
         <span className={`cursor-pointer duration-150 ${type === "a" ? "text-black" : "text-slate-700" }`} onMouseEnter={()=>{setType("a")}}>A Series</span>
     </div>
 
-    <div className="flex flex-row space-x-4">
+    <div className="relative flex flex-row space-x-4" style={{minHeight:160}}>
 
+          {loader ? <Loader fixed={false} size={64}/> : 
+          
           <div className="flex flex-col items-center p-4 cursor-pointer" onClick={()=>{navigate(`/products?type=phone&category=${type}`)}}>
                  <div className="flex items-center justify-center bg-slate-400 w-24 h-24">
                       <img src={type === "x-series" ? xseries : type === "reno" ? renoseries : aseries} className="w-24 h-24 object-cover"/>
                  </div>
                  <span className="mt-4 text-center text-xs" style={{maxWidth:96}}>{type === "x-series" ? "Find X Series" : type === "reno" ? "Find Reno Series" : "Find A Series"}</span>
-          </div>
+          </div> }
 
-          {list.map(item => renderItem(item))}
+         { list.map(item => renderItem(item))}
+         
+         
     </div>
 
     <div className="flex flex-row space-x-12 mt-4 items-center">

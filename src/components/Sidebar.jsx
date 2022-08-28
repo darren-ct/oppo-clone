@@ -5,6 +5,7 @@ import {kontenbase} from '../lib/kontenbase'
 import Support from './sidebar/Support';
 import Iot from './sidebar/Iot.jsx';
 import Smartphone from './sidebar/Smartphone.jsx';
+import Loader from './Loader';
 
 import search from '../assets/icons/search.png';
 import cross from '../assets/icons/cross.png';
@@ -14,11 +15,12 @@ import minus from '../assets/icons/minus.png';
 import {popular} from '../helpers/index';
 
 
-const Sidebar = ({isSidebar,promo}) => {
+const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
 
      const navigate = useNavigate();
      
      // States
+     const[loading,setLoading] = useState(false);
      const[list,setList] = useState([]);
      const[input,setInput] = useState("");
      const[activeInput,setActiveInput] = useState(false);
@@ -72,8 +74,10 @@ const Sidebar = ({isSidebar,promo}) => {
 
      const getProducts = async() => {
            // getProducts
+           setLoading(true)
            let { data, error } = await kontenbase.service('Phones').find({lookup: ['_id','name']});
            if(error) return console.log(error);
+           setLoading(false)
 
            data = data.filter(item =>  item.name.toLowerCase().trim().startsWith(input.toLowerCase().trim()) === true);
            setList(data)
@@ -115,19 +119,19 @@ const Sidebar = ({isSidebar,promo}) => {
                     <div className='relative py-4 px-4'>
                            <div className="cursor-pointer text-slate-500 text-xs" onClick={()=>{toggle("slider",1)}}>Find X Series</div>
                            <img src={toggleIcon("slider",1)} className='absolute top-5 right-0 w-4 h-4 cursor-pointer' onClick={()=>{toggle("slider",1)}}/>
-                           {activeSlider === 1 ? <Smartphone category='x' /> : ""}
+                           {activeSlider === 1 ? <Smartphone category='x' setIsSidebar={setIsSidebar}/> : ""}
                     </div>
 
                     <div className='relative py-4 px-4'>
                            <div className="cursor-pointer text-slate-500 text-xs" onClick={()=>{toggle("slider",2)}}>Reno Series</div>
                            <img src={toggleIcon("slider",2)} className='absolute top-5 right-0 w-4 h-4 cursor-pointer' onClick={()=>{toggle("slider",2)}}/>
-                           {activeSlider === 2 ? <Smartphone category='reno' /> : ""}
+                           {activeSlider === 2 ? <Smartphone category='reno' setIsSidebar={setIsSidebar}/> : ""}
                     </div>
 
                     <div className='relative py-4 px-4'>
                            <div className="cursor-pointer text-slate-500 text-xs" onClick={()=>{toggle("slider",3)}}>A Series</div>
                            <img src={toggleIcon("slider",3)} className='absolute top-5 right-0 w-4 h-4 cursor-pointer' onClick={()=>{toggle("slider",3)}}/>
-                           {activeSlider === 3 ? <Smartphone category='a' /> : ""}
+                           {activeSlider === 3 ? <Smartphone category='a' setIsSidebar={setIsSidebar}/> : ""}
                     </div>
                 </div>
            </div>
@@ -151,13 +155,13 @@ const Sidebar = ({isSidebar,promo}) => {
                     <div className='relative py-4 px-4'>
                            <div className="cursor-pointer text-slate-500 text-xs" onClick={()=>{toggle("slider",4)}}>Audio</div>
                            <img src={toggleIcon("slider",4)} className='absolute top-5 right-0 w-4 h-4 cursor-pointer' onClick={()=>{toggle("slider",4)}}/>
-                           {activeSlider === 4 ? <Iot category='audio'/> : ""}
+                           {activeSlider === 4 ? <Iot category='audio' setIsSidebar={setIsSidebar}/> : ""}
                     </div>
 
                     <div className='relative py-4 px-4'>
                            <div className="cursor-pointer text-slate-500 text-xs"  onClick={()=>{toggle("slider",5)}}>Wearables</div>
                            <img src={toggleIcon("slider",5)} className='absolute top-5 right-0 w-4 h-4 cursor-pointer' onClick={()=>{toggle("slider",5)}}/>
-                           {activeSlider === 5 ? <Iot category='wearables' /> : ""}
+                           {activeSlider === 5 ? <Iot category='wearables' setIsSidebar={setIsSidebar}/> : ""}
                     </div>
                 </div>
            </div>
@@ -218,14 +222,15 @@ const Sidebar = ({isSidebar,promo}) => {
         </div>
 
         {/* Search Result */}
-        <div className={`${!activeInput ? "opacity-0 hidden" : "opacity-100 block"}`}>
-             {list.length === 0 || input === "" ? 
+        <div className={`${!activeInput ? "opacity-0 hidden" : "opacity-100 block"} relative`} style={{minHeight:300}}>
+             { input === "" && !loading ? 
              <div className='text-xs text-slate-500 mb-7'>Pencarian Populer</div> 
              : ""}
              
-             {list.length === 0 || input === "" ? 
+             {loading ? <Loader fixed={false} size={64}/> : input === "" ?
              popular.map(item => <div className='mb-4 cursor-pointer' onClick={()=>{setInput(item)}}>{item}</div>) 
-             : list.map(item => <div className='mb-4 cursor-pointer text-slate-700' onClick={()=>{navigate(`/phone/${item._id}`)}}>{item.name}</div>)}
+             : list.length === 0 ? <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">No results...</p>
+             : list.map(item => <div className='mb-4 cursor-pointer text-slate-700' onClick={()=>{navigate(`/phone/${item._id}`);setIsSidebar(false)}}>{item.name}</div>)}
         </div>
         
 
