@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {kontenbase} from '../lib/kontenbase'
 
@@ -18,6 +18,7 @@ import {popular} from '../helpers/index';
 const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
 
      const navigate = useNavigate();
+     
      
      // States
      const[loading,setLoading] = useState(false);
@@ -95,9 +96,9 @@ const Sidebar = ({isSidebar,setIsSidebar,promo}) => {
         </div>
 
         {/* Search */}
-        <div className='relative mb-8 flex flex-row items-center'>
+        <div className={`relative mb-8 flex flex-row items-center`}>
                <img src={search} className='absolute left-5 top-4 w-6 h-6'/>
-               <input className='flex-1 py-4 px-14  bg-slate-50 rounded-full outline-none' type="text" placeholder='Cari oppo.com' onChange={onChange} onFocus={()=>{setActiveInput(true)}} value={input} />
+               <input className='w-full py-4 px-14  bg-slate-50 rounded-full outline-none' type="text" placeholder='Cari oppo.com' onChange={onChange} onFocus={()=>{setActiveInput(true)}} value={input} />
                { activeInput && input? <img src= {cross} className="absolute right-24 top-4 w-6 h-6 cursor-pointer" onClick={()=>{setInput("")}}/> : ""}
                { activeInput ? <span style={{color:"#046a38",marginLeft:24,cursor:"pointer"}} onClick={()=>{setActiveInput(false)}}>Batal</span> : ""}
         </div>

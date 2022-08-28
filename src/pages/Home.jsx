@@ -14,6 +14,7 @@ const Home = () => {
 
     //   States
     const [belowMd,setBelowMd] = useState(window.innerWidth < 768);
+    const [belowXsm,setBelowXsm] = useState(window.innerWidth < 484);
 
     const[sliders,setSliders] = useState([]);
     const[products,setProducts] = useState([]);
@@ -32,9 +33,11 @@ const Home = () => {
 
     useEffect(()=>{
           window.addEventListener('resize', handleWindowResize);
+          window.addEventListener('resize',handleWindowResize2)
 
           return () => {
           window.removeEventListener('resize', handleWindowResize);
+          window.removeEventListener('resize',handleWindowResize2)
           };
      },[])
 
@@ -42,6 +45,11 @@ const Home = () => {
     const handleWindowResize = () => {
           if(window.innerWidth < 768) return setBelowMd(true);
           if(window.innerWidth > 768) return setBelowMd(false);
+    };
+
+    const handleWindowResize2 = () => {
+     if(window.innerWidth < 484) return setBelowXsm(true);
+     if(window.innerWidth > 484) return setBelowXsm(false);
     };
 
     const getProducts = async() => {
@@ -66,27 +74,27 @@ const Home = () => {
     };
      
   return (
-  <HomeContext.Provider value={{belowMd}}>
-  <div className=''>
+  <HomeContext.Provider value={{belowMd,belowXsm}}>
+    <div className='w-full'>
 
      {/* Slider */}
-    <div className='relative'>
+    <div className={`relative ${belowXsm ? "w-4/5 mx-auto" : "w-full"}`}>
        { prodLoading  ? <Loader size={64} fixed={true} /> :
        <Swiper spaceBetween={50} slidesPerView={1} onSlideChange={() => {}} onSwiper={()=>{}}>
          {sliders.map(slider => (
              <SwiperSlide>
-                  <div className='flex flex-col-reverse items-center  md:flex-row md:justify-center space-x-8' style={{height:600,backgroundColor:"#FEFEFE"}}>
+               <div className='flex flex-col-reverse items-center  md:flex-row md:justify-center space-x-8' style={{height:600,backgroundColor:"#FEFEFE"}}>
      
-                  <div className='flex flex-col justify-center bg-transparent'>
+               <div className='flex flex-col justify-center bg-transparent'>
                      <div className='text-3xl'>{slider.name}</div>
                      <div className='mt-1 mb-3'>{slider.short_desc}</div>
                      <div className='flex flex-row space-x-8 items-end'>
                           <button className='p-4 flex flex-col items-center justify-center bg-black text-white text-xs' onClick={()=>{navigate(`/phone/${slider._id}`)}}>Lebih Lanjut</button>
                           <span className='underline underline-offset-4 text-xs cursor-pointer'>Pre-order sekarang</span>
                      </div>
-             </div>
+               </div>
      
-             <img src={slider.image[0].url} style={{width:500,height:480}} className='object-cover mb-8 md:mb-0' />
+             <img src={slider.image[0].url} style={belowXsm  ? {width:400} : belowMd ? {width:400} : {width:500,height:480}} className='object-cover mb-8 md:mb-0' />
      
           </div>
           </SwiperSlide>
@@ -171,7 +179,7 @@ const Home = () => {
          <div className='px-8 py-24 xl:container xl:mx-auto'>
                <div className='text-2xl mb-8'> Dunia OPPO</div>
                {/* Slider */}
-               <Swiper spaceBetween={25} slidesPerView={3} onSlideChange={() => {}} onSwiper={()=>{}}>
+               <Swiper spaceBetween={25} slidesPerView={belowMd ? 1 : 3} onSlideChange={() => {}} onSwiper={()=>{}}>
                    {dunia.map(item => (
                     <SwiperSlide>
                         <div className='w-full cursor-pointer'>
@@ -197,7 +205,7 @@ const Home = () => {
         </div>
     </div>
 
-  </div>
+   </div>
   </HomeContext.Provider>
   )
 }

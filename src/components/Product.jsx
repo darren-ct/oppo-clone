@@ -5,7 +5,7 @@ import { ProductInterface } from "../interfaces/ProductInterface"
 
 const Product = ({id,name,image,short_desc,height,type}) => {
   const navigate = useNavigate();
-  const {belowMd} = useContext(HomeContext);
+  const {belowMd,belowXsm} = useContext(HomeContext);
 
   const navigateTo = () => {
     if(type === "iot") return navigate(`/iot/${id}`) 
@@ -13,9 +13,10 @@ const Product = ({id,name,image,short_desc,height,type}) => {
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-4 cursor-pointer" onClick={navigateTo}>
+    <div className={`w-full flex flex-col items-center space-y-4 cursor-pointer ${belowMd && "mb-10"}`} onClick={navigateTo}>
         <div className="overflow-hidden">
-           <img src={image} className={`object-cover w-full mb-4 scale-100 hover:scale-125 hover:opacity-70 duration-150`} style={!belowMd ? {height:height} : {height:500,width:380}}/>
+           <img src={image} className={`object-cover w-full mb-4 scale-100 hover:scale-125 hover:opacity-70 duration-150`} 
+           style={!belowMd ? {height:height} : belowMd && !belowXsm ? {height:500,width:380} : {height:250,width:190}}/>
         </div>
         <span className="text-base font-medium">{name}</span>
         <span className="text-sm font-light">{short_desc}</span>
